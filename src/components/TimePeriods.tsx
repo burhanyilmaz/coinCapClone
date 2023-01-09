@@ -17,7 +17,10 @@ const TimePeriods: FC<Props> = ({ selectedPeriod = TimePeriod['1D'], onPress }) 
           styles.periodContainer,
           { backgroundColor: selectedPeriod === period ? '#10c683' : 'transparent' },
         ]}>
-        <Text style={styles.periodText}>{period}</Text>
+        <Text
+          style={[styles.periodText, { color: selectedPeriod === period ? '#fff' : '#10c683' }]}>
+          {period}
+        </Text>
       </Pressable>
     ))}
   </View>
@@ -27,6 +30,7 @@ const styles = StyleSheet.create({
   container: {
     width: '100%',
     flexDirection: 'row',
+    backgroundColor: '#0e1b26',
     justifyContent: 'space-between',
   },
   periodContainer: {
@@ -36,7 +40,6 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
   periodText: {
-    color: '#fff',
     fontWeight: '600',
     fontSize: 14,
   },
