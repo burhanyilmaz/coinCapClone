@@ -27,11 +27,15 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     padding: 8,
+    paddingVertical: 0,
     borderRadius: 8,
+    height: 44,
   },
   title: {
     color: 'white',
     fontSize: 14,
+    lineHeight: 14,
+    fontWeight: '500',
   },
 });
 

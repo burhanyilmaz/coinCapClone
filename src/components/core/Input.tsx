@@ -16,7 +16,7 @@ const Input: FC<Props & TextInputProps> = ({ iconComp, ...rest }) => (
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    height: 48,
+    height: 44,
     borderWidth: 2,
     borderRadius: 10,
     overflow: 'hidden',
@@ -25,7 +25,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#1e2634',
   },
   input: {
-    height: 48,
+    height: 40,
     width: '100%',
     color: '#fff',
     paddingHorizontal: 48,

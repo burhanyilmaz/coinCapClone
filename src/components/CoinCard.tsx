@@ -1,8 +1,8 @@
 import React, { memo, useState, useEffect, useRef, FC } from 'react';
 import { StyleSheet, View, Text, Pressable } from 'react-native';
-import Icon from '@expo/vector-icons/Ionicons';
 import CoinLogo from './CoinLogo';
 import { PriceDirection } from './types';
+import Percentage from './Percentage';
 
 type Props = {
   name: string;
@@ -43,20 +43,7 @@ const CoinCard: FC<Props> = ({ symbol, name, price, dailyPercentage, priceDirect
       </View>
       <View style={styles.lastPart}>
         <Text style={styles.price}>${price}</Text>
-        <View style={styles.dailyPercentageContainer}>
-          <Icon
-            size={12}
-            color={priceDirection === PriceDirection.down ? 'red' : '#31b979'}
-            name={priceDirection === PriceDirection.down ? 'caret-down' : 'caret-up'}
-          />
-          <Text
-            style={[
-              styles.dailyPercentage,
-              { color: priceDirection === PriceDirection.down ? 'red' : '#31b979' },
-            ]}>
-            {dailyPercentage}%
-          </Text>
-        </View>
+        <Percentage priceDirection={priceDirection} value={dailyPercentage} />
       </View>
     </Pressable>
   );
@@ -85,7 +72,7 @@ const styles = StyleSheet.create({
     color: 'white',
   },
   name: {
-    fontSize: 14,
+    fontSize: 13,
     color: 'white',
     opacity: 0.5,
   },
