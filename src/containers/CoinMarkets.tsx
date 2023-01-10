@@ -15,9 +15,9 @@ const CoinMarkets = () => {
       <Text style={styles.statsTitle}>Available Markets</Text>
       <FlatList
         data={markets}
+        listKey="coinMarket"
         renderItem={renderItem}
         showsVerticalScrollIndicator={false}
-        key="coinMarket"
       />
     </View>
   );

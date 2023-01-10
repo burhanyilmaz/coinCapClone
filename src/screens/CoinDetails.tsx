@@ -73,6 +73,7 @@ const CoinDetails = () => {
         data={[]}
         ref={flatListRef}
         renderItem={null}
+        listKey="coinDetails"
         ListHeaderComponent={<ScreenHeader symbol={coin?.symbol} name={coin?.name} />}
         ListEmptyComponent={
           <>

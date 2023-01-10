@@ -30,9 +30,9 @@ const CoinStats = () => {
       <Text style={styles.statsTitle}>Coin Statistic</Text>
       <FlatList
         data={stats}
+        listKey="coinStats"
         renderItem={renderItem}
         showsVerticalScrollIndicator={false}
-        key="coinStats"
       />
     </View>
   );
