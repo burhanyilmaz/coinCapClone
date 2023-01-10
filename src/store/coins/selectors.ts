@@ -72,3 +72,5 @@ export const formattedCoinMarketSelector = createSelector(coinMarketSelector, ma
 
 export const coinMarketLimitSelector = (state: coinsRootState): number =>
   state.coins.coinMarketLimit || 10;
+export const coinHistorySelector = (state: coinsRootState) =>
+  state.coins.coinHistory.map(history => Number(history.priceUsd));

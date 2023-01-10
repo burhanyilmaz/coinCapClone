@@ -8,6 +8,7 @@ import TimePeriods from 'components/TimePeriods';
 import { StyleSheet, SafeAreaView, ScrollView } from 'react-native';
 import { useSelector } from 'react-redux';
 import {
+  coinHistorySelector,
   coinMarketLimitSelector,
   selectedCoinPercentageSelector,
   selectedCoinPriceSelector,
@@ -16,18 +17,21 @@ import {
 import { PriceDirection } from 'components/types';
 import CoinMarkets from 'containers/CoinMarkets';
 import { useAppDispatch } from 'hooks/useAppDispatch';
-import { fetchCoinMarkets } from 'store/coins/thunk';
+import { fetchCoinHistory, fetchCoinMarkets } from 'store/coins/thunk';
 import CustomButton from 'components/core/Button';
 import { increaseCoinMarketLimit } from 'store/coins/actions';
 import { useCoinCapWebSocket } from 'hooks/useWebSocket';
+import { HistoryInterval } from 'store/coins/types';
 
 const CoinDetails = () => {
   const dispatch = useAppDispatch();
   const scrollRef = useRef<ScrollView>();
   const socket = useCoinCapWebSocket();
-  const [marketLoading, setMarkerLoading] = useState(false);
+  const [marketLoading, setMarketLoading] = useState(false);
+  const [historyInterval, setHistoryInterval] = useState<HistoryInterval>(HistoryInterval.h1);
 
   const coin = useSelector(selectedCoinSelector);
+  const coinHistory = useSelector(coinHistorySelector);
   const percentage = useSelector(selectedCoinPercentageSelector);
   const formattedPrice = useSelector(selectedCoinPriceSelector);
   const coinMarketLimit = useSelector(coinMarketLimitSelector);
@@ -38,14 +42,16 @@ const CoinDetails = () => {
   const onPressBackToTop = () => {
     scrollRef.current?.scrollTo({ y: 0, animated: true });
   };
-  const onPressTimePeriod = () => {};
+  const onPressTimePeriod = (interval: HistoryInterval) => {
+    setHistoryInterval(interval);
+  };
 
   useEffect(() => {
-    setMarkerLoading(true);
+    setMarketLoading(true);
     dispatch(fetchCoinMarkets())
       .unwrap()
       .finally(() => {
-        setMarkerLoading(false);
+        setMarketLoading(false);
       });
   }, [coinMarketLimit]);
 
@@ -57,6 +63,10 @@ const CoinDetails = () => {
     return () => socket.close();
   }, []);
 
+  useEffect(() => {
+    dispatch(fetchCoinHistory(historyInterval));
+  }, [historyInterval]);
+
   return (
     <SafeAreaView style={styles.container}>
       <ScreenHeader symbol={coin?.symbol} name={coin?.name} />
@@ -67,8 +77,8 @@ const CoinDetails = () => {
           formattedPrice={formattedPrice}
           priceDirection={Number(percentage) < 0 ? PriceDirection.down : PriceDirection.up}
         />
-        <Chart data={[1, 2, 4, -1, 2, 8, 100]} />
-        <TimePeriods onPress={onPressTimePeriod} />
+        <Chart data={coinHistory} />
+        <TimePeriods onPress={onPressTimePeriod} selectedPeriod={historyInterval} />
         <Spacer size={16} />
         <CoinStats />
         <Spacer size={16} />

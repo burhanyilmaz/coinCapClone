@@ -19,13 +19,13 @@ type Props = {
   data: number[];
 };
 
-const Chart: FC<Props> = ({ data = Array.from({ length: 100 }, () => Math.random()) }) => {
+const Chart: FC<Props> = ({ data }) => {
   const { width } = useWindowDimensions();
   const memoizedWidth = useMemo(() => (1080 / width) * 20 + width, [width]);
   const chartData: LineChartData = {
     datasets: [
       {
-        data,
+        data: data.length > 0 ? data : [0],
         color: () => 'rgb(25,197,132)',
         strokeWidth: 1,
       },

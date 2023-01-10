@@ -4,6 +4,7 @@ export type coinsState = {
   selectedCoin: Coin | undefined;
   coinMarkets: Market[];
   coinMarketLimit: number;
+  coinHistory: CoinHistory[];
 };
 
 export interface Coin {
@@ -30,4 +31,22 @@ export interface Market {
   volumeUsd24Hr: string;
   priceUsd: string;
   volumePercent: string;
+}
+
+export interface CoinHistory {
+  priceUsd: string;
+  time: number;
+  date: string;
+}
+
+export enum HistoryInterval {
+  m1 = 'm1',
+  m5 = 'm5',
+  m15 = 'm15',
+  m30 = 'm30',
+  h1 = 'h1',
+  h2 = 'h2',
+  h6 = 'h6',
+  h12 = 'h12',
+  d1 = 'd1',
 }

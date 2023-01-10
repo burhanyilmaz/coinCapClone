@@ -4,9 +4,9 @@ export enum PriceDirection {
 }
 
 export enum TimePeriod {
-  '1D' = '1D',
-  '1W' = '1W',
-  '1M' = '1M',
-  '1Y' = '1Y',
-  'ALL' = 'All',
+  'h1' = '1D',
+  'h2' = '1W',
+  'h6' = '1M',
+  'h12' = '1Y',
+  'd1' = 'All',
 }

@@ -3,22 +3,28 @@ import { View, Text, StyleSheet, Pressable } from 'react-native';
 import { TimePeriod } from './types';
 
 type Props = {
-  selectedPeriod?: TimePeriod;
-  onPress: (period: TimePeriod) => void;
+  selectedPeriod?: string;
+  onPress: (period: string) => void;
 };
 
-const TimePeriods: FC<Props> = ({ selectedPeriod = TimePeriod['1D'], onPress }) => (
+const TimePeriods: FC<Props> = ({ selectedPeriod = TimePeriod['h1'], onPress }) => (
   <View style={styles.container}>
-    {Object.values(TimePeriod).map(period => (
+    {Object.values(TimePeriod).map((period, index) => (
       <Pressable
-        key={period}
-        onPress={() => onPress(period)}
+        key={Object.keys(TimePeriod)[index]}
+        onPress={() => onPress(Object.keys(TimePeriod)[index])}
         style={[
           styles.periodContainer,
-          { backgroundColor: selectedPeriod === period ? '#10c683' : 'transparent' },
+          {
+            backgroundColor:
+              selectedPeriod === Object.keys(TimePeriod)[index] ? '#10c683' : 'transparent',
+          },
         ]}>
         <Text
-          style={[styles.periodText, { color: selectedPeriod === period ? '#fff' : '#10c683' }]}>
+          style={[
+            styles.periodText,
+            { color: selectedPeriod === Object.keys(TimePeriod)[index] ? '#fff' : '#10c683' },
+          ]}>
           {period}
         </Text>
       </Pressable>

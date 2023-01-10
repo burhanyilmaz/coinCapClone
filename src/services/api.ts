@@ -1,5 +1,5 @@
 import wretch from 'wretch';
-import { Coin, Market } from 'store/coins/types';
+import { Coin, HistoryInterval, Market } from 'store/coins/types';
 
 const externalApi = wretch('https://api.coincap.io/v2').options({
   credentials: 'include',
@@ -27,8 +27,16 @@ class Api {
     return await externalApi.get(`/assets/${id}`).json(data => data.data || {});
   }
 
-  static async getCoinHistory({ id }: { id: string }): Promise<{ price: string; time: number }[]> {
-    return await externalApi.get(`/assets/${id}/history?interval=d1`).json(data => data.data || []);
+  static async getCoinHistory({
+    id,
+    interval = HistoryInterval.h1,
+  }: {
+    id: string;
+    interval?: HistoryInterval;
+  }): Promise<{ price: string; time: number }[]> {
+    return await externalApi
+      .get(`/assets/${id}/history?interval=${interval}`)
+      .json(data => data.data || []);
   }
 
   static async getCoinMarkets({ id, limit }: { id: string; limit: number }): Promise<Market[]> {

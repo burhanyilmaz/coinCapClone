@@ -1,6 +1,6 @@
 import { createReducer } from '@reduxjs/toolkit';
 import { Coin, coinsState } from './types';
-import { fetchCoinMarkets, fetchCoins, searchCoins } from './thunk';
+import { fetchCoinHistory, fetchCoinMarkets, fetchCoins, searchCoins } from './thunk';
 import {
   increaseCoinLimit,
   increaseCoinMarketLimit,
@@ -17,6 +17,7 @@ export const initialState: coinsState = {
   coinMarkets: [],
   coinMarketLimit: 10,
   selectedCoin: undefined,
+  coinHistory: [],
 };
 
 const coins = createReducer(initialState, builder => {
@@ -56,6 +57,10 @@ const coins = createReducer(initialState, builder => {
         selectedCoin: updatedSelectedCoin,
       };
     })
+    .addCase(fetchCoinHistory.fulfilled, (state, { payload }) => ({
+      ...state,
+      coinHistory: payload,
+    }))
     .addCase(resetCoins, () => initialState);
 });
 
