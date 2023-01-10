@@ -9,19 +9,19 @@ import { useCoinCapWebSocket } from 'hooks/useWebSocket';
 import useDebounce from 'hooks/useDebounce';
 import CoinList from 'containers/CoinList';
 import CoinsHeader from 'components/CoinsHeader';
+import { useIsFocused } from '@react-navigation/native';
 
 const Coins = () => {
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [isSearchResult, setIsSearchResult] = useState(false);
-
+  const isFocusedScreen = useIsFocused();
   const dispatch = useAppDispatch();
   const socket = useCoinCapWebSocket();
   const debouncedSearchTerm = useDebounce(searchTerm, 200);
 
   const limit = useSelector(limitSelector);
   const subscribeCoinList = useSelector(subscribeCoinListSelector);
-
 
   const onSearch = (text: string) => {
     setSearchTerm(text);
@@ -36,10 +36,14 @@ const Coins = () => {
   }, [limit]);
 
   useEffect(() => {
-    if (subscribeCoinList) {
+    if (subscribeCoinList && isFocusedScreen) {
       socket.subscribeCoins(subscribeCoinList);
     }
-  }, [subscribeCoinList]);
+
+    if (!isFocusedScreen) {
+      socket.close();
+    }
+  }, [subscribeCoinList, isFocusedScreen]);
 
   useEffect(() => {
     dispatch(searchCoins(debouncedSearchTerm));
