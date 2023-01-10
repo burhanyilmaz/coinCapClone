@@ -1,24 +1,63 @@
-import { memo } from 'react';
+import React, { memo, useState, useEffect } from 'react';
 import { SafeAreaView, StyleSheet } from 'react-native';
-import { Text } from 'react-native';
 import { useSelector } from 'react-redux';
-import { dummyDataSelector } from 'store/coins/selectors';
+import { limitSelector, subscribeCoinListSelector } from 'store/coins/selectors';
+import Spacer from 'components/core/Spacer';
+import { useAppDispatch } from 'hooks/useAppDispatch';
+import { fetchCoins, searchCoins } from 'store/coins/thunk';
+import { useCoinCapWebSocket } from 'hooks/useWebSocket';
+import useDebounce from 'hooks/useDebounce';
+import CoinList from 'containers/CoinList';
+import CoinsHeader from 'components/CoinsHeader';
 
 const Coins = () => {
-  const dummy = useSelector(dummyDataSelector);
+  const [loading, setLoading] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [isSearchResult, setIsSearchResult] = useState(false);
+
+  const dispatch = useAppDispatch();
+  const socket = useCoinCapWebSocket();
+  const debouncedSearchTerm = useDebounce(searchTerm, 200);
+
+  const limit = useSelector(limitSelector);
+  const subscribeCoinList = useSelector(subscribeCoinListSelector);
+
+
+  const onSearch = (text: string) => {
+    setSearchTerm(text);
+    setIsSearchResult(!!text || false);
+  };
+
+  useEffect(() => {
+    setLoading(true);
+    dispatch(fetchCoins())
+      .unwrap()
+      .finally(() => setLoading(false));
+  }, [limit]);
+
+  useEffect(() => {
+    if (subscribeCoinList) {
+      socket.subscribeCoins(subscribeCoinList);
+    }
+  }, [subscribeCoinList]);
+
+  useEffect(() => {
+    dispatch(searchCoins(debouncedSearchTerm));
+  }, [debouncedSearchTerm]);
 
   return (
-    <SafeAreaView style={styles.container}>
-      <Text>Coins - {dummy}</Text>
+    <SafeAreaView style={styles.safe}>
+      <CoinsHeader onSearch={onSearch} />
+      <Spacer size={16} />
+      <CoinList isSearchResult={isSearchResult} loading={loading} />
     </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
+  safe: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: '#0d1c26',
   },
 });
 

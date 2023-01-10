@@ -1,39 +1,46 @@
-import React, { memo, useState, useEffect, useRef, FC } from 'react';
+import React, { memo, useState, useEffect, useRef, FC, useMemo } from 'react';
 import { StyleSheet, View, Text, Pressable } from 'react-native';
 import CoinLogo from './CoinLogo';
 import { PriceDirection } from './types';
 import Percentage from './Percentage';
+import { getFormattedPercentageValue, getFormattedPriceValue } from 'utils/helper';
 
 type Props = {
   name: string;
-  price: number;
+  price: string;
   symbol: string;
   onPress: () => void;
-  dailyPercentage: number;
+  dailyPercentage: string;
   priceDirection: PriceDirection;
 };
 
 const CoinCard: FC<Props> = ({ symbol, name, price, dailyPercentage, priceDirection, onPress }) => {
+  const previousPrice = useRef<number | null>(null);
   const [cardBackgroundColor, setCardBackgroundColor] = useState('#1e2634');
-  const currentValue = useRef<number | null>(null);
+
+  const priceValue = useMemo(() => getFormattedPriceValue(price), [price]);
+  const percentageValue = useMemo(
+    () => getFormattedPercentageValue(dailyPercentage),
+    [dailyPercentage],
+  );
 
   useEffect(() => {
     let timeout: NodeJS.Timeout;
-    if (currentValue.current !== price && currentValue.current) {
-      setCardBackgroundColor('#103b38');
+    if (previousPrice.current !== Number(price) && previousPrice.current) {
+      setCardBackgroundColor(Number(price) > previousPrice.current ? '#103b38' : '#46262b');
       timeout = setTimeout(() => {
         setCardBackgroundColor('#1e2634');
       }, 300);
     }
-    currentValue.current = price;
+    previousPrice.current = Number(price);
 
     return () => clearTimeout(timeout);
-  }, [price]);
+  }, [Number(price)]);
 
   return (
     <Pressable
-      style={[styles.container, { backgroundColor: cardBackgroundColor }]}
-      onPress={onPress}>
+      onPress={onPress}
+      style={[styles.container, { backgroundColor: cardBackgroundColor }]}>
       <View style={styles.firstPart}>
         <CoinLogo coinId={symbol} />
         <View style={styles.coinNameAndSymbol}>
@@ -42,8 +49,8 @@ const CoinCard: FC<Props> = ({ symbol, name, price, dailyPercentage, priceDirect
         </View>
       </View>
       <View style={styles.lastPart}>
-        <Text style={styles.price}>${price}</Text>
-        <Percentage priceDirection={priceDirection} value={dailyPercentage} />
+        <Text style={styles.price}>{priceValue}</Text>
+        <Percentage priceDirection={priceDirection} value={percentageValue} />
       </View>
     </Pressable>
   );
@@ -82,6 +89,7 @@ const styles = StyleSheet.create({
   price: {
     fontWeight: '500',
     color: 'white',
+    textAlign: 'right',
   },
   dailyPercentageContainer: {
     flexDirection: 'row',

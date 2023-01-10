@@ -30,7 +30,8 @@
     "react-native-svg": "13.4.0",
     "react-native-web": "~0.18.9",
     "react-redux": "^8.0.5",
-    "redux": "^4.2.0"
+    "redux": "^4.2.0",
+    "wretch": "^2.3.1"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",

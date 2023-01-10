@@ -10,8 +10,12 @@ type Props = {
   fontSize?: number;
 };
 
-const Percentage: FC<Props> = ({ priceDirection, value, iconSize = 12, fontSize = 14 }) => (
-  <View style={styles.dailyPercentageContainer}>
+const Percentage: FC<Props> = ({ priceDirection, value, iconSize = 12, fontSize = 12 }) => (
+  <View
+    style={[
+      styles.dailyPercentageContainer,
+      { alignItems: priceDirection === PriceDirection.down ? 'flex-end' : 'flex-start' },
+    ]}>
     <Icon
       size={iconSize}
       color={priceDirection === PriceDirection.down ? 'red' : '#31b979'}
@@ -36,7 +40,7 @@ const styles = StyleSheet.create({
   dailyPercentage: {
     color: '#31b979',
     marginLeft: 2,
-    fontSize: 14,
+    fontSize: 8,
   },
 });
 
