@@ -5,7 +5,7 @@ import Spacer from 'components/core/Spacer';
 import PriceAndPercentage from 'components/PriceAndPercentage';
 import ScreenHeader from 'components/ScreenHeader';
 import TimePeriods from 'components/TimePeriods';
-import { StyleSheet, SafeAreaView, ScrollView } from 'react-native';
+import { StyleSheet, SafeAreaView, FlatList } from 'react-native';
 import { useSelector } from 'react-redux';
 import {
   coinHistorySelector,
@@ -25,7 +25,7 @@ import { HistoryInterval } from 'store/coins/types';
 
 const CoinDetails = () => {
   const dispatch = useAppDispatch();
-  const scrollRef = useRef<ScrollView>();
+  const flatListRef = useRef<FlatList>(null);
   const socket = useCoinCapWebSocket();
   const [marketLoading, setMarketLoading] = useState(false);
   const [historyInterval, setHistoryInterval] = useState<HistoryInterval>(HistoryInterval.h1);
@@ -40,7 +40,7 @@ const CoinDetails = () => {
     dispatch(increaseCoinMarketLimit());
   };
   const onPressBackToTop = () => {
-    scrollRef.current?.scrollTo({ y: 0, animated: true });
+    flatListRef.current?.scrollToOffset({ offset: 0 });
   };
   const onPressTimePeriod = (interval: HistoryInterval) => {
     setHistoryInterval(interval);
@@ -69,35 +69,46 @@ const CoinDetails = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScreenHeader symbol={coin?.symbol} name={coin?.name} />
-      <ScrollView ref={scrollRef}>
-        <PriceAndPercentage
-          percentage={percentage}
-          price={coin?.priceUsd || 0}
-          formattedPrice={formattedPrice}
-          priceDirection={Number(percentage) < 0 ? PriceDirection.down : PriceDirection.up}
-        />
-        <Chart data={coinHistory} />
-        <TimePeriods onPress={onPressTimePeriod} selectedPeriod={historyInterval} />
-        <Spacer size={16} />
-        <CoinStats />
-        <Spacer size={16} />
-        <CoinMarkets />
-        <Spacer size={3} />
-        <CustomButton
-          title="Load More"
-          textColor="#10c683"
-          radius={0}
-          onPress={onPressLoadMore}
-          loading={marketLoading}
-        />
-        <CustomButton
-          title="Back To Top"
-          textColor="#10c683"
-          bgColor="transparent"
-          onPress={onPressBackToTop}
-        />
-      </ScrollView>
+      <FlatList
+        data={[]}
+        ref={flatListRef}
+        renderItem={null}
+        ListHeaderComponent={<ScreenHeader symbol={coin?.symbol} name={coin?.name} />}
+        ListEmptyComponent={
+          <>
+            <PriceAndPercentage
+              percentage={percentage}
+              price={coin?.priceUsd || 0}
+              formattedPrice={formattedPrice}
+              priceDirection={Number(percentage) < 0 ? PriceDirection.down : PriceDirection.up}
+            />
+            <Chart data={coinHistory} />
+            <TimePeriods onPress={onPressTimePeriod} selectedPeriod={historyInterval} />
+            <Spacer size={16} />
+            <CoinStats />
+            <Spacer size={16} />
+            <CoinMarkets />
+            <Spacer size={3} />
+          </>
+        }
+        ListFooterComponent={
+          <>
+            <CustomButton
+              title="Load More"
+              textColor="#10c683"
+              radius={0}
+              onPress={onPressLoadMore}
+              loading={marketLoading}
+            />
+            <CustomButton
+              title="Back To Top"
+              textColor="#10c683"
+              bgColor="transparent"
+              onPress={onPressBackToTop}
+            />
+          </>
+        }
+      />
     </SafeAreaView>
   );
 };

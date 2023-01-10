@@ -28,7 +28,12 @@ const CoinStats = () => {
   return (
     <View style={styles.container}>
       <Text style={styles.statsTitle}>Coin Statistic</Text>
-      <FlatList data={stats} renderItem={renderItem} showsVerticalScrollIndicator={false} />
+      <FlatList
+        data={stats}
+        renderItem={renderItem}
+        showsVerticalScrollIndicator={false}
+        key="coinStats"
+      />
     </View>
   );
 };

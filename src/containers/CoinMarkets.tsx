@@ -1,22 +1,24 @@
 import DataRow from 'components/DataRow';
-import { PriceDirection } from 'components/types';
 import { memo } from 'react';
 import { FlatList, StyleSheet, View } from 'react-native';
 import { Text } from 'react-native';
 import { useSelector } from 'react-redux';
-import { formattedCoinMarketSelector, selectedCoinStatsSelector } from 'store/coins/selectors';
+import { formattedCoinMarketSelector } from 'store/coins/selectors';
 
 const CoinMarkets = () => {
   const markets = useSelector(formattedCoinMarketSelector);
 
-  const renderItem = ({ item, index }: { item: string[]; index: number }) => (
-    <DataRow values={item} />
-  );
+  const renderItem = ({ item }: { item: string[] }) => <DataRow values={item} />;
 
   return (
     <View style={styles.container}>
       <Text style={styles.statsTitle}>Available Markets</Text>
-      <FlatList data={markets} renderItem={renderItem} showsVerticalScrollIndicator={false} />
+      <FlatList
+        data={markets}
+        renderItem={renderItem}
+        showsVerticalScrollIndicator={false}
+        key="coinMarket"
+      />
     </View>
   );
 };
