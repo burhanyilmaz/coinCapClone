@@ -1,9 +1,10 @@
-import React, { memo, useState, useEffect, useRef, FC, useMemo } from 'react';
+import React, { memo, FC, useMemo } from 'react';
 import { StyleSheet, View, Text, Pressable } from 'react-native';
+import { getFormattedPercentageValue, getFormattedCurrencyValue } from 'utils/helper';
+import { useDynamicColor } from 'hooks/useDynamicColor';
 import CoinLogo from './CoinLogo';
 import { PriceDirection } from './types';
 import Percentage from './Percentage';
-import { getFormattedPercentageValue, getFormattedPriceValue } from 'utils/helper';
 
 type Props = {
   name: string;
@@ -15,27 +16,17 @@ type Props = {
 };
 
 const CoinCard: FC<Props> = ({ symbol, name, price, dailyPercentage, priceDirection, onPress }) => {
-  const previousPrice = useRef<number | null>(null);
-  const [cardBackgroundColor, setCardBackgroundColor] = useState('#1e2634');
-
-  const priceValue = useMemo(() => getFormattedPriceValue(price), [price]);
+  const priceValue = useMemo(() => getFormattedCurrencyValue(price), [price]);
   const percentageValue = useMemo(
     () => getFormattedPercentageValue(dailyPercentage),
     [dailyPercentage],
   );
-
-  useEffect(() => {
-    let timeout: NodeJS.Timeout;
-    if (previousPrice.current !== Number(price) && previousPrice.current) {
-      setCardBackgroundColor(Number(price) > previousPrice.current ? '#103b38' : '#46262b');
-      timeout = setTimeout(() => {
-        setCardBackgroundColor('#1e2634');
-      }, 300);
-    }
-    previousPrice.current = Number(price);
-
-    return () => clearTimeout(timeout);
-  }, [Number(price)]);
+  const cardBackgroundColor = useDynamicColor({
+    value: price,
+    currentColor: '#1e2634',
+    positiveColor: '#103b38',
+    negativeColor: '#46262b',
+  });
 
   return (
     <Pressable
