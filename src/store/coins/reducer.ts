@@ -1,20 +1,32 @@
 import { createReducer } from '@reduxjs/toolkit';
-import { coinsState } from './types';
-import { fetchCoins, searchCoins } from './thunk';
-import { increaseCoinLimit, resetCoins, selectCoin, updateCoinPrice } from './actions';
+import { Coin, coinsState } from './types';
+import { fetchCoinMarkets, fetchCoins, searchCoins } from './thunk';
+import {
+  increaseCoinLimit,
+  increaseCoinMarketLimit,
+  resetCoins,
+  selectCoin,
+  updateCoinPrice,
+  updateSelectedCoinPrice,
+} from './actions';
 import { PriceDirection } from 'components/types';
 
 export const initialState: coinsState = {
   coins: [],
   limit: 20,
+  coinMarkets: [],
+  coinMarketLimit: 10,
   selectedCoin: undefined,
 };
 
 const coins = createReducer(initialState, builder => {
   builder
     .addCase(fetchCoins.fulfilled, (state, { payload }) => ({ ...state, coins: payload }))
+
     .addCase(searchCoins.fulfilled, (state, { payload }) => ({ ...state, coins: payload }))
+
     .addCase(increaseCoinLimit, state => ({ ...state, limit: state.limit + 10 }))
+
     .addCase(updateCoinPrice, (state, { payload }) => {
       const updatedCoins = state.coins.map(coin => ({
         ...coin,
@@ -24,7 +36,26 @@ const coins = createReducer(initialState, builder => {
 
       return { ...state, coins: updatedCoins };
     })
+
+    .addCase(fetchCoinMarkets.fulfilled, (state, { payload }) => ({
+      ...state,
+      coinMarkets: payload,
+    }))
+
     .addCase(selectCoin, (state, { payload }) => ({ ...state, selectedCoin: payload }))
+
+    .addCase(increaseCoinMarketLimit, state => ({
+      ...state,
+      coinMarketLimit: state.coinMarketLimit + 10,
+    }))
+    .addCase(updateSelectedCoinPrice, (state, { payload }) => {
+      const updatedSelectedCoin = { ...state.selectedCoin, priceUsd: payload } as Coin;
+
+      return {
+        ...state,
+        selectedCoin: updatedSelectedCoin,
+      };
+    })
     .addCase(resetCoins, () => initialState);
 });
 

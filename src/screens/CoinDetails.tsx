@@ -1,18 +1,106 @@
-import { memo } from 'react';
-import { StyleSheet } from 'react-native';
-import { Text, SafeAreaView } from 'react-native';
+import { memo, useEffect, useRef, useState } from 'react';
+import Chart from 'components/Chart';
+import CoinStats from 'containers/CoinStats';
+import Spacer from 'components/core/Spacer';
+import PriceAndPercentage from 'components/PriceAndPercentage';
+import ScreenHeader from 'components/ScreenHeader';
+import TimePeriods from 'components/TimePeriods';
+import { StyleSheet, SafeAreaView, ScrollView } from 'react-native';
+import { useSelector } from 'react-redux';
+import {
+  coinMarketLimitSelector,
+  selectedCoinPercentageSelector,
+  selectedCoinPriceSelector,
+  selectedCoinSelector,
+} from 'store/coins/selectors';
+import { PriceDirection } from 'components/types';
+import CoinMarkets from 'containers/CoinMarkets';
+import { useAppDispatch } from 'hooks/useAppDispatch';
+import { fetchCoinMarkets } from 'store/coins/thunk';
+import CustomButton from 'components/core/Button';
+import { increaseCoinMarketLimit } from 'store/coins/actions';
+import { useCoinCapWebSocket } from 'hooks/useWebSocket';
 
-const CoinDetails = () => (
-  <SafeAreaView style={styles.container}>
-    <Text>CoinDetails</Text>
-  </SafeAreaView>
-);
+const CoinDetails = () => {
+  const dispatch = useAppDispatch();
+  const scrollRef = useRef<ScrollView>();
+  const socket = useCoinCapWebSocket();
+  const [marketLoading, setMarkerLoading] = useState(false);
+
+  const coin = useSelector(selectedCoinSelector);
+  const percentage = useSelector(selectedCoinPercentageSelector);
+  const formattedPrice = useSelector(selectedCoinPriceSelector);
+  const coinMarketLimit = useSelector(coinMarketLimitSelector);
+
+  const onPressLoadMore = () => {
+    dispatch(increaseCoinMarketLimit());
+  };
+  const onPressBackToTop = () => {
+    scrollRef.current?.scrollTo({ y: 0, animated: true });
+  };
+  const onPressTimePeriod = () => {};
+
+  useEffect(() => {
+    setMarkerLoading(true);
+    dispatch(fetchCoinMarkets())
+      .unwrap()
+      .finally(() => {
+        setMarkerLoading(false);
+      });
+  }, [coinMarketLimit]);
+
+  useEffect(() => {
+    if (coin?.id) {
+      socket.subscribeCoin(coin.id);
+    }
+
+    return () => socket.close();
+  }, []);
+
+  return (
+    <SafeAreaView style={styles.container}>
+      <ScreenHeader symbol={coin?.symbol} name={coin?.name} />
+      <ScrollView ref={scrollRef}>
+        <PriceAndPercentage
+          percentage={percentage}
+          price={coin?.priceUsd || 0}
+          formattedPrice={formattedPrice}
+          priceDirection={Number(percentage) < 0 ? PriceDirection.down : PriceDirection.up}
+        />
+        <Chart data={[1, 2, 4, -1, 2, 8, 100]} />
+        <TimePeriods onPress={onPressTimePeriod} />
+        <Spacer size={16} />
+        <CoinStats />
+        <Spacer size={16} />
+        <CoinMarkets />
+        <Spacer size={3} />
+        <CustomButton
+          title="Load More"
+          textColor="#10c683"
+          radius={0}
+          onPress={onPressLoadMore}
+          loading={marketLoading}
+        />
+        <CustomButton
+          title="Back To Top"
+          textColor="#10c683"
+          bgColor="transparent"
+          onPress={onPressBackToTop}
+        />
+      </ScrollView>
+    </SafeAreaView>
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: '#0d1c26',
+  },
+  statisticText: {
+    fontSize: 16,
+    color: '#fff',
+    fontWeight: '700',
   },
 });
 

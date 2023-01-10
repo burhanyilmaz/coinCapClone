@@ -10,3 +10,12 @@ export const searchCoins = createAppAsyncThunk(
   'coins/SEARCH_COIN',
   async (text: string) => await Api.searchCoins({ text }),
 );
+
+export const fetchCoinMarkets = createAppAsyncThunk(
+  'coins/FETCH_COIN_MARKETS',
+  async (_, { getState }) =>
+    await Api.getCoinMarkets({
+      id: getState().coins.selectedCoin?.id,
+      limit: getState().coins.coinMarketLimit,
+    }),
+);

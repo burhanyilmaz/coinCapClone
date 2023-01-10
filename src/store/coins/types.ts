@@ -2,6 +2,8 @@ export type coinsState = {
   coins: (Coin & { priceDirection?: string })[];
   limit: number;
   selectedCoin: Coin | undefined;
+  coinMarkets: Market[];
+  coinMarketLimit: number;
 };
 
 export interface Coin {

@@ -31,8 +31,10 @@ class Api {
     return await externalApi.get(`/assets/${id}/history?interval=d1`).json(data => data.data || []);
   }
 
-  static async getCoinMarkets({ id }: { id: string }): Promise<{ data: Market[] }> {
-    return await externalApi.get(`/assets/${id}/markets`).json(data => data.data || []);
+  static async getCoinMarkets({ id, limit }: { id: string; limit: number }): Promise<Market[]> {
+    return await externalApi
+      .get(`/assets/${id}/markets?limit=${limit}`)
+      .json(data => data.data || []);
   }
 }
 

@@ -7,10 +7,10 @@ import Spacer from 'components/core/Spacer';
 import { StatusBar } from 'expo-status-bar';
 
 type Props = {
-    onSearch: (text: string) => void
-}
+  onSearch: (text: string) => void;
+};
 
-const CoinsHeader:FC<Props> = ({ onSearch }) => {
+const CoinsHeader: FC<Props> = ({ onSearch }) => {
   const onOpenSortBy = () => {};
   const onReverse = () => {};
 
@@ -44,7 +44,7 @@ const styles = StyleSheet.create({
   headerContainer: {
     backgroundColor: '#0d1c26',
     flexDirection: 'row',
-  }
+  },
 });
 
 export default memo(CoinsHeader);

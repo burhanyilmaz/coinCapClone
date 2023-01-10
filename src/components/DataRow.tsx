@@ -15,7 +15,9 @@ const DataRow: FC<Props> = ({ values = [], isHeader, customComponent, customComp
         {index === customComponentIndex && customComponent ? (
           customComponent
         ) : (
-          <Text style={isHeader ? styles.headerText : styles.valueText}>{value}</Text>
+          <Text numberOfLines={1} style={isHeader ? styles.headerText : styles.valueText}>
+            {value}
+          </Text>
         )}
       </View>
     ))}

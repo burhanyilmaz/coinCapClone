@@ -7,7 +7,7 @@ export const createAppAsyncThunk = createAsyncThunk.withTypes<{
   rejectValue: string;
 }>();
 
-export const getFormattedPriceValue = (price: number | string) =>
+export const getFormattedCurrencyValue = (price: number | string) =>
   new Intl.NumberFormat('en-US', {
     maximumSignificantDigits: 5,
     style: 'currency',

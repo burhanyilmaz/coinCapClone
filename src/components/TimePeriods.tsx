@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, Pressable } from 'react-native';
 import { TimePeriod } from './types';
 
 type Props = {
-  selectedPeriod: TimePeriod;
+  selectedPeriod?: TimePeriod;
   onPress: (period: TimePeriod) => void;
 };
 

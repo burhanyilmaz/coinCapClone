@@ -1,5 +1,6 @@
-import { useRef, useState } from 'react';
-import { updateCoinPrice } from 'store/coins/actions';
+/* eslint-disable indent */
+import { useRef } from 'react';
+import { updateCoinPrice, updateSelectedCoinPrice } from 'store/coins/actions';
 import { useAppDispatch } from './useAppDispatch';
 
 const baseWebsocketUrl = 'wss://ws.coincap.io';
@@ -43,7 +44,20 @@ export const useCoinCapWebSocket = () => {
 
   const listenToChanges = (socket: WebSocket) => {
     socket.onmessage = function (msg) {
-      dispatch(updateCoinPrice(JSON.parse(msg.data)));
+      const coinData = Object.values(JSON.parse(msg.data) || {});
+      switch (selectedSubscribeType.current) {
+        case 'all':
+        case 'coins':
+          dispatch(updateCoinPrice(JSON.parse(msg.data)));
+          break;
+        case 'coin':
+          if (coinData.length > 0) {
+            dispatch(updateSelectedCoinPrice(coinData[0] as string));
+          }
+          break;
+        default:
+          break;
+      }
     };
   };
 

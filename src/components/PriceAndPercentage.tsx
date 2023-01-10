@@ -1,24 +1,31 @@
+import { useDynamicColor } from 'hooks/useDynamicColor';
 import React, { FC } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import Percentage from './Percentage';
 import { PriceDirection } from './types';
 
 type Props = {
-  price: number;
-  percentage: number;
+  percentage: string;
+  price: string | number;
+  formattedPrice: string;
+  priceDirection: PriceDirection;
 };
 
-const PriceAndPercentage: FC<Props> = ({ price, percentage }) => (
-  <View style={styles.container}>
-    <Text style={styles.price}>${price}</Text>
-    <Percentage
-      priceDirection={PriceDirection.down}
-      value={percentage}
-      fontSize={16}
-      iconSize={14}
-    />
-  </View>
-);
+const PriceAndPercentage: FC<Props> = ({ price, percentage, priceDirection, formattedPrice }) => {
+  const priceColor = useDynamicColor({
+    value: price,
+    currentColor: '#fff',
+    positiveColor: '#10c683',
+    negativeColor: 'red',
+  });
+
+  return (
+    <View style={styles.container}>
+      <Text style={[styles.price, { color: priceColor }]}>{formattedPrice}</Text>
+      <Percentage priceDirection={priceDirection} value={percentage} fontSize={16} iconSize={14} />
+    </View>
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
