@@ -1,6 +1,6 @@
 import Input from 'components/core/Input';
 import React, { memo, FC } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { Platform, StyleSheet, View } from 'react-native';
 import Icon from '@expo/vector-icons/Octicons';
 import CustomButton from 'components/core/Button';
 import Spacer from 'components/core/Spacer';
@@ -40,6 +40,7 @@ const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 16,
     backgroundColor: '#0d1c26',
+    paddingTop: Platform.select({ android: 24 })
   },
   headerContainer: {
     backgroundColor: '#0d1c26',

@@ -5,7 +5,7 @@ import Spacer from 'components/core/Spacer';
 import PriceAndPercentage from 'components/PriceAndPercentage';
 import ScreenHeader from 'components/ScreenHeader';
 import TimePeriods from 'components/TimePeriods';
-import { StyleSheet, SafeAreaView, FlatList } from 'react-native';
+import { StyleSheet, SafeAreaView, FlatList, Platform } from 'react-native';
 import { useSelector } from 'react-redux';
 import {
   coinHistorySelector,
@@ -74,6 +74,7 @@ const CoinDetails = () => {
         ref={flatListRef}
         renderItem={null}
         listKey="coinDetails"
+        style={styles.listContainer}
         ListHeaderComponent={<ScreenHeader symbol={coin?.symbol} name={coin?.name} />}
         ListEmptyComponent={
           <>
@@ -118,6 +119,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#0d1c26',
+  },
+  listContainer: {
+    paddingTop: Platform.select({ android: 24 })
   },
   statisticText: {
     fontSize: 16,
